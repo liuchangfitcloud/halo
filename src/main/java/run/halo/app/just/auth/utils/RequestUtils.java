@@ -6,6 +6,8 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Arrays;
 import java.util.Optional;
+import me.zhyd.oauth.cache.AuthDefaultStateCache;
+import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.config.AuthDefaultSource;
 import me.zhyd.oauth.request.AuthAlipayRequest;
@@ -56,6 +58,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import run.halo.app.infra.properties.HaloProperties;
 import run.halo.app.just.auth.consts.SecurityConstants;
 import run.halo.app.just.auth.enums.ErrorCodeEnum;
+import run.halo.app.just.auth.enums.StateCacheType;
 import run.halo.app.just.auth.exception.Auth2Exception;
 import run.halo.app.just.auth.extension.AuthSetting;
 import run.halo.app.just.auth.properties.JustAuthProperties;
@@ -106,7 +109,11 @@ public final class RequestUtils {
         String redirectUri = haloProperties.getExternalUrl().toString() + SecurityConstants.URL_DEFAULT_SEPARATOR + justAuthProperties.getRedirectUrlPrefix();
         //去掉多余的斜杠
         authConfig.setRedirectUri(UriComponentsBuilder.fromHttpUrl(redirectUri).build().toUriString());
-
+        //定义缓存
+        AuthStateCache authStateCache = AuthDefaultStateCache.INSTANCE;
+        if(justAuthProperties.getCacheType().equals(StateCacheType.DEFAULT)){
+            authStateCache = AuthDefaultStateCache.INSTANCE;
+        }
         //优先查询JustAuth已经支持的 然后再去查自定义的
         Optional<AuthDefaultSource> optionalAuthDefaultSource = Arrays.stream(AuthDefaultSource.values()).filter(authDefaultSource -> authDefaultSource.name().equals(authSetting.getAuthType().toUpperCase())).findFirst();
         if(optionalAuthDefaultSource.isPresent()){
@@ -114,137 +121,137 @@ public final class RequestUtils {
             //需要根据provider来获取对应的类
             switch (authDefaultSource) {
                 case GITHUB:
-                    authDefaultRequest = new AuthGithubRequest(authConfig);
+                    authDefaultRequest = new AuthGithubRequest(authConfig,authStateCache);
                     break;
                 case WEIBO:
-                    authDefaultRequest = new AuthWeiboRequest(authConfig);
+                    authDefaultRequest = new AuthWeiboRequest(authConfig,authStateCache);
                     break;
                 case GITEE:
-                    authDefaultRequest = new AuthGiteeRequest(authConfig);
+                    authDefaultRequest = new AuthGiteeRequest(authConfig,authStateCache);
                     break;
                 case DINGTALK:
-                    authDefaultRequest = new AuthDingTalkRequest(authConfig);
+                    authDefaultRequest = new AuthDingTalkRequest(authConfig,authStateCache);
                     break;
                 case DINGTALK_ACCOUNT:
-                    authDefaultRequest = new AuthDingTalkAccountRequest(authConfig);
+                    authDefaultRequest = new AuthDingTalkAccountRequest(authConfig,authStateCache);
                     break;
                 case BAIDU:
-                    authDefaultRequest = new AuthBaiduRequest(authConfig);
+                    authDefaultRequest = new AuthBaiduRequest(authConfig,authStateCache);
                     break;
                 case CSDN:
                     // CSDN已被justAuth废弃
-                    authDefaultRequest = new AuthCsdnRequest(authConfig);
+                    authDefaultRequest = new AuthCsdnRequest(authConfig,authStateCache);
                     break;
                 case CODING:
-                    authDefaultRequest = new AuthCodingRequest(authConfig);
+                    authDefaultRequest = new AuthCodingRequest(authConfig,authStateCache);
                     break;
                 case OSCHINA:
-                    authDefaultRequest = new AuthOschinaRequest(authConfig);
+                    authDefaultRequest = new AuthOschinaRequest(authConfig,authStateCache);
                     break;
                 case ALIPAY:
-                    authDefaultRequest = new AuthAlipayRequest(authConfig,authSetting.getAlipayPublicKey());
+                    authDefaultRequest = new AuthAlipayRequest(authConfig,authSetting.getAlipayPublicKey(),authStateCache);
                     break;
                 case QQ:
-                    authDefaultRequest = new AuthQqRequest(authConfig);
+                    authDefaultRequest = new AuthQqRequest(authConfig,authStateCache);
                     break;
                 case WECHAT_OPEN:
-                    authDefaultRequest = new AuthWeChatOpenRequest(authConfig);
+                    authDefaultRequest = new AuthWeChatOpenRequest(authConfig,authStateCache);
                     break;
                 case WECHAT_MP:
-                    authDefaultRequest = new AuthWeChatMpRequest(authConfig);
+                    authDefaultRequest = new AuthWeChatMpRequest(authConfig,authStateCache);
                     break;
                 case TAOBAO:
-                    authDefaultRequest = new AuthTaobaoRequest(authConfig);
+                    authDefaultRequest = new AuthTaobaoRequest(authConfig,authStateCache);
                     break;
                 case GOOGLE:
-                    authDefaultRequest = new AuthGoogleRequest(authConfig);
+                    authDefaultRequest = new AuthGoogleRequest(authConfig,authStateCache);
                     break;
                 case FACEBOOK:
-                    authDefaultRequest = new AuthFacebookRequest(authConfig);
+                    authDefaultRequest = new AuthFacebookRequest(authConfig,authStateCache);
                     break;
                 case DOUYIN:
-                    authDefaultRequest = new AuthDouyinRequest(authConfig);
+                    authDefaultRequest = new AuthDouyinRequest(authConfig,authStateCache);
                     break;
                 case LINKEDIN:
-                    authDefaultRequest = new AuthLinkedinRequest(authConfig);
+                    authDefaultRequest = new AuthLinkedinRequest(authConfig,authStateCache);
                     break;
                 case MICROSOFT:
-                    authDefaultRequest = new AuthMicrosoftRequest(authConfig);
+                    authDefaultRequest = new AuthMicrosoftRequest(authConfig,authStateCache);
                     break;
                 case MICROSOFT_CN:
-                    authDefaultRequest = new AuthMicrosoftCnRequest(authConfig);
+                    authDefaultRequest = new AuthMicrosoftCnRequest(authConfig,authStateCache);
                     break;
                 case MI:
-                    authDefaultRequest = new AuthMiRequest(authConfig);
+                    authDefaultRequest = new AuthMiRequest(authConfig,authStateCache);
                     break;
                 case TOUTIAO:
-                    authDefaultRequest = new AuthTaobaoRequest(authConfig);
+                    authDefaultRequest = new AuthTaobaoRequest(authConfig,authStateCache);
                     break;
                 case TEAMBITION:
-                    authDefaultRequest = new AuthTeambitionRequest(authConfig);
+                    authDefaultRequest = new AuthTeambitionRequest(authConfig,authStateCache);
                     break;
                 case RENREN:
-                    authDefaultRequest = new AuthRenrenRequest(authConfig);
+                    authDefaultRequest = new AuthRenrenRequest(authConfig,authStateCache);
                     break;
                 case PINTEREST:
-                    authDefaultRequest = new AuthPinterestRequest(authConfig);
+                    authDefaultRequest = new AuthPinterestRequest(authConfig,authStateCache);
                     break;
                 case STACK_OVERFLOW:
-                    authDefaultRequest = new AuthStackOverflowRequest(authConfig);
+                    authDefaultRequest = new AuthStackOverflowRequest(authConfig,authStateCache);
                     break;
                 case HUAWEI:
-                    authDefaultRequest = new AuthHuaweiRequest(authConfig);
+                    authDefaultRequest = new AuthHuaweiRequest(authConfig,authStateCache);
                     break;
                 case WECHAT_ENTERPRISE:
-                    authDefaultRequest = new AuthWeChatEnterpriseQrcodeRequest(authConfig);
+                    authDefaultRequest = new AuthWeChatEnterpriseQrcodeRequest(authConfig,authStateCache);
                     break;
                 case WECHAT_ENTERPRISE_QRCODE_THIRD:
-                    authDefaultRequest = new AuthWeChatEnterpriseThirdQrcodeRequest(authConfig);
+                    authDefaultRequest = new AuthWeChatEnterpriseThirdQrcodeRequest(authConfig,authStateCache);
                     break;
                 case WECHAT_ENTERPRISE_WEB:
-                    authDefaultRequest = new AuthWeChatEnterpriseWebRequest(authConfig);
+                    authDefaultRequest = new AuthWeChatEnterpriseWebRequest(authConfig,authStateCache);
                     break;
                 case KUJIALE:
-                    authDefaultRequest = new AuthKujialeRequest(authConfig);
+                    authDefaultRequest = new AuthKujialeRequest(authConfig,authStateCache);
                     break;
                 case GITLAB:
-                    authDefaultRequest = new AuthGitlabRequest(authConfig);
+                    authDefaultRequest = new AuthGitlabRequest(authConfig,authStateCache);
                     break;
                 case MEITUAN:
-                    authDefaultRequest = new AuthMeituanRequest(authConfig);
+                    authDefaultRequest = new AuthMeituanRequest(authConfig,authStateCache);
                     break;
                 case ELEME:
-                    authDefaultRequest = new AuthElemeRequest(authConfig);
+                    authDefaultRequest = new AuthElemeRequest(authConfig,authStateCache);
                     break;
                 case TWITTER:
-                    authDefaultRequest = new AuthTwitterRequest(authConfig);
+                    authDefaultRequest = new AuthTwitterRequest(authConfig,authStateCache);
                     break;
                 case FEISHU:
-                    authDefaultRequest = new AuthFeishuRequest(authConfig);
+                    authDefaultRequest = new AuthFeishuRequest(authConfig,authStateCache);
                     break;
                 case JD:
-                    authDefaultRequest = new AuthJdRequest(authConfig);
+                    authDefaultRequest = new AuthJdRequest(authConfig,authStateCache);
                     break;
                 case ALIYUN:
-                    authDefaultRequest = new AuthAliyunRequest(authConfig);
+                    authDefaultRequest = new AuthAliyunRequest(authConfig,authStateCache);
                     break;
                 case XMLY:
-                    authDefaultRequest = new AuthXmlyRequest(authConfig);
+                    authDefaultRequest = new AuthXmlyRequest(authConfig,authStateCache);
                     break;
                 case AMAZON:
-                    authDefaultRequest = new AuthAmazonRequest(authConfig);
+                    authDefaultRequest = new AuthAmazonRequest(authConfig,authStateCache);
                     break;
                 case SLACK:
-                    authDefaultRequest = new AuthSlackRequest(authConfig);
+                    authDefaultRequest = new AuthSlackRequest(authConfig,authStateCache);
                     break;
                 case LINE:
-                    authDefaultRequest = new AuthLineRequest(authConfig);
+                    authDefaultRequest = new AuthLineRequest(authConfig,authStateCache);
                     break;
                 case OKTA:
-                    authDefaultRequest = new AuthOktaRequest(authConfig);
+                    authDefaultRequest = new AuthOktaRequest(authConfig,authStateCache);
                     break;
                 case PROGINN:
-                    authDefaultRequest = new AuthProginnRequest(authConfig);
+                    authDefaultRequest = new AuthProginnRequest(authConfig,authStateCache);
                     break;
                 default:
                     break;
@@ -258,7 +265,7 @@ public final class RequestUtils {
                 AuthCustomSource authCustomSource = optionalAuthCustomSource.get();
                 switch (authCustomSource){
                     case OIDC:
-                        authDefaultRequest = new AuthOidcRequest(authConfig,authSetting);
+                        authDefaultRequest = new AuthOidcRequest(authConfig,authSetting,authStateCache);
                         break;
                     default:
                         break;
