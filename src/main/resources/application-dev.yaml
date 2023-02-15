@@ -25,7 +25,7 @@ halo:
       super-admin-password: admin
   plugin:
     runtime-mode: development # development, deployment
-  work-dir: ${user.home}/halo2-dev
+  work-dir: ${user.home}/halo-dev
 logging:
   level:
     run.halo.app: DEBUG
