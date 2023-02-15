@@ -16,6 +16,8 @@ checkstyle {
 }
 
 repositories {
+//    mavenLocal()
+
     mavenCentral()
 
     maven { url 'https://repo.spring.io/milestone' }
@@ -49,6 +51,9 @@ ext {
     jsonPatch = "1.13"
     springDocOpenAPI = "2.0.2"
     lucene = "9.5.0"
+    justAuth = "1.16.5"
+    hutoolHttp = "5.7.7"
+    simpleHttp = "1.0.5"
 }
 
 dependencies {
@@ -85,6 +90,11 @@ dependencies {
     implementation "org.springframework.integration:spring-integration-core"
     implementation "com.github.java-json-tools:json-patch:$jsonPatch"
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6"
+    implementation ("me.zhyd.oauth:JustAuth:$justAuth"){
+        exclude group: 'com.xkcoding.http',module: 'simple-http'
+    }
+    implementation "com.xkcoding.http:simple-http:$simpleHttp"
+    implementation "cn.hutool:hutool-http:$hutoolHttp"
 
     compileOnly 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'

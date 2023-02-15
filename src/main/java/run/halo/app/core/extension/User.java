@@ -39,6 +39,8 @@ public class User extends AbstractExtension {
 
     private UserStatus status;
 
+    private List<FederalInfo> federalInfos;//联邦信息
+
     @Data
     public static class UserSpec {
 
@@ -94,6 +96,15 @@ public class User extends AbstractExtension {
 
         private String reason;
 
+    }
+
+    @Data
+    public static class FederalInfo{
+        private String proverId;//提供者
+        private String authType;//认证来源
+        private Instant createAt;//创建时间
+        private Instant updateAt;//更新时间
+        private String rawUserInfo;//原始用户信息
     }
 
 }

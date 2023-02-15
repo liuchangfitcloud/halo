@@ -29,6 +29,7 @@ import run.halo.app.core.extension.content.Snapshot;
 import run.halo.app.core.extension.content.Tag;
 import run.halo.app.extension.ConfigMap;
 import run.halo.app.extension.SchemeManager;
+import run.halo.app.just.auth.extension.AuthSetting;
 import run.halo.app.search.extension.SearchEngine;
 import run.halo.app.security.authentication.pat.PersonalAccessToken;
 
@@ -77,6 +78,8 @@ public class SchemeInitializer implements ApplicationListener<ApplicationStarted
         schemeManager.register(PolicyTemplate.class);
         // metrics.halo.run
         schemeManager.register(Counter.class);
+
+        schemeManager.register(AuthSetting.class);
 
         eventPublisher.publishEvent(new SchemeInitializedEvent(this));
     }
