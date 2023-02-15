@@ -1,6 +1,7 @@
 package run.halo.app.just.auth.config;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -49,6 +50,9 @@ public class JustAuthWebSecurityConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "spring.profiles.active",
+        havingValue = "dev",
+        matchIfMissing = false)
     AuthSettingInit authSettingInit(ReactiveExtensionClient client) {
         return new AuthSettingInit(client);
     }
