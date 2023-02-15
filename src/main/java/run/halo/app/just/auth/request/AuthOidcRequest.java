@@ -10,6 +10,7 @@ import com.xkcoding.http.support.SimpleHttpResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import me.zhyd.oauth.cache.AuthStateCache;
 import me.zhyd.oauth.config.AuthConfig;
 import me.zhyd.oauth.model.AuthCallback;
 import me.zhyd.oauth.model.AuthToken;
@@ -38,6 +39,11 @@ public class AuthOidcRequest extends AuthDefaultRequest {
 
     public AuthOidcRequest(AuthConfig config,AuthSetting authSetting) {
         super(config, AuthCustomSource.OIDC);
+        this.authSetting = authSetting;
+    }
+
+    public AuthOidcRequest(AuthConfig config,AuthSetting authSetting, AuthStateCache authStateCache) {
+        super(config, AuthCustomSource.OIDC,authStateCache);
         this.authSetting = authSetting;
     }
 
